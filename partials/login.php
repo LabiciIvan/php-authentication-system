@@ -1,5 +1,6 @@
 <?php
 	require "./classes/TemporaryStorage.php";
+	use Classes\TemporaryStorage;
 	
 	TemporaryStorage::sessionStart();
 	$data_retrieved = TemporaryStorage::getData('login');
@@ -19,6 +20,8 @@
 		<label for="password" class="form-label">Password</label>
 		<input type="text" class="form-control" id="password" placeholder="Secure password" name="password" value="<?php echo (isset($data_retrieved['email']) ? $data_retrieved['password'] : '') ?>">
 	</div>
+	
+	<input type="hidden" name="route" value="login">
 
 	<button class="btn btn-primary">Log in</button>
 </form>

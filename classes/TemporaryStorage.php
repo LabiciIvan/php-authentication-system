@@ -1,6 +1,10 @@
 <?php
 
-require "BaseTemporaryStorage.php";
+namespace Classes;
+
+require __DIR__ . "/Base/BaseTemporaryStorage.php";
+use Classes\Base\BaseTemporaryStorage;
+
 
 /**
  * Eases the work with sessions.

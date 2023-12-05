@@ -15,7 +15,7 @@ class View {
 	 * Static method to render the navigation bar.
 	 */
 	public static function renderNavigation() {
-		require "./partials/navigation.php";
+		require __DIR__ ."/../partials/navigation.php";
 	}
 
 	/**
@@ -24,9 +24,9 @@ class View {
 	 */
 	public static function renderPartials() {
 		if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] === '/register') {
-			require "./partials/register.php";
+			require __DIR__ . "/../partials/register.php";
 		} else if (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] === '/login') {
-			require "./partials/login.php";
+			require __DIR__ . "/../partials/login.php";
 		} else {
 			echo "No such url";
 		}
