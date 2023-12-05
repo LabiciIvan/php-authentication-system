@@ -5,7 +5,7 @@
 
 	<div class="card p-2 border-0 w-100 mb-3" >
 		<label for="name" class="form-label">Name</label>
-		<input type="email" class="form-control" id="name" placeholder="John Doe">
+		<input type="text" class="form-control" id="name" placeholder="John Doe" name="name">
 	</div>
 
 	<div class="card w-100 border-0 p-2">
@@ -28,15 +28,18 @@
 
 	<div class="card p-2 border-0 w-100 mb-3">
 		<label for="email" class="form-label">Email address</label>
-		<input type="email" class="form-control" id="email" placeholder="name@example.com">
+		<input type="email" class="form-control" id="email" placeholder="name@example.com" name="email">
 	</div>
 	<div class="card p-2 border-0 w-100 mb-3">
 		<label for="password" class="form-label">Password</label>
-		<input type="email" class="form-control" id="password" placeholder="Secure password">
+		<input type="text" class="form-control" id="password" placeholder="Secure password" name="password">
 	</div>
 	<div class="card p-2 border-0 w-100 mb-3">
 		<label for="password_repeat" class="form-label">Password repeat</label>
-		<input type="email" class="form-control" id="password_repeat" placeholder="Repeat password">
+		<input type="text" class="form-control" id="password_repeat" placeholder="Repeat password" name="password_repeat">
 	</div>
+
+	<input type="hidden" name="route" value="register">
+
 	<button class="btn btn-primary">Register</button>
 </form>

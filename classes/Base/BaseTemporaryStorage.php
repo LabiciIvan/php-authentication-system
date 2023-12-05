@@ -1,5 +1,7 @@
 <?php
 
+namespace Classes\Base;
+
 /**
  * Work with session.
  * 
