@@ -53,7 +53,16 @@ function loginRoute(array $login_data) {
  */
 function registerRoute(array $register_data) {
 
+	// Validate if all the fields have at least a value.
 	$result = ValidationBase::checkExistance($register_data);
+
+	// If is array then store in session the errors and redirect to register page.
+	if (is_array($result)) {
+		TemporaryStorage::sessionStart();
+		$tempStorage = new TemporaryStorage($result, 'register');
+		$tempStorage->store();
+		header("location: register");
+	}
 
 }
 ?>
