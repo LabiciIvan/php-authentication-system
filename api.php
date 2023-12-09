@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['route']) && ($_POST['
 		loginRoute($login_data);
 
 	} else if ($_POST['route'] === 'register') {
-
 		$register_data = [
 			'name'				=> $_POST['name'],
 			'gender'			=> $_POST['gender'],
@@ -53,15 +52,29 @@ function loginRoute(array $login_data) {
  */
 function registerRoute(array $register_data) {
 
+	// Start the session to store for temporary use incoming register data.
+	TemporaryStorage::sessionStart();
+
+	// Filter data into a new array only with non empty field values.
+	// This will help to output the data in the form for the user.
+	$register_received = array_filter($register_data, function($data) {
+		return !empty($data);
+	});
+
+	// Store only data which is present in request and not empty fields.
+	$tempRegisterData = new TemporaryStorage($register_received, 'register');
+	$tempRegisterData->store();
+	
 	// Validate if all the fields have at least a value.
 	$result = ValidationBase::checkExistance($register_data);
 
 	// If is array then store in session the errors and redirect to register page.
 	if (is_array($result)) {
-		TemporaryStorage::sessionStart();
-		$tempStorage = new TemporaryStorage($result, 'register');
-		$tempStorage->store();
+		// Store the errors of fields which failed validation.
+		$tempErrors = new TemporaryStorage($result, 'register_errors');
+		$tempErrors->store();
 		header("location: register");
+		exit;
 	}
 
 }
