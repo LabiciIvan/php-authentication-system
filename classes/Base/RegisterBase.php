@@ -72,6 +72,19 @@ class RegisterBase extends DB implements RegisterInterface {
 
 		return $user;
 	}
+
+	public function getUser(string $id): array {
+
+		$stmt = $this->db->prepare("SELECT name from users WHERE id=:id");
+
+		$stmt->bindParam(":id", $id);
+
+		$stmt->execute();
+
+		$user = $stmt->fetch(DB::FETCH_ASSOC);
+
+		return $user;
+	}
 }
 
 ?>
