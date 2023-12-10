@@ -1,7 +1,9 @@
 <?php
 require __DIR__ . "/classes/TemporaryStorage.php";
 require __DIR__ . "/classes/Base/ValidationBase.php";
+require __DIR__ . "/classes/Register.php";
 
+use Classes\Register;
 use Classes\TemporaryStorage;
 use Classes\Base\ValidationBase;
 
@@ -77,5 +79,19 @@ function registerRoute(array $register_data) {
 		exit;
 	}
 
+	// Validation logic finished and we can store the user in database.
+	$registerInstance = new Register($register_data);
+	$userID	= $registerInstance->registerUser();
+	$user	= $registerInstance->getUser($userID);
+
+	// Remove session data related to errors and register data.
+	unset($_SESSION['register_errors']);
+	unset($_SESSION['register']);
+
+	// Store a new session with a message to user and return to register page.
+	$register_success = new TemporaryStorage(['success' => $user['name'] . ' you are registered now.'], 'register_success');
+	$register_success->store();
+
+	header("location: register");
 }
 ?>

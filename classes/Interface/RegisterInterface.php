@@ -37,6 +37,20 @@ Interface RegisterInterface {
 	 * @return int
 	 */
 	public function registerUser(): int;
+
+
+	/**
+	 * Get user.
+	 * 
+	 * Return the user name from database for the passed in ID.
+	 * 
+	 * This method is used when we registered an user in database and we
+	 * want to fetch that user based on the last insert ID.
+	 * 
+	 * @param	int		$id		The user ID from database.
+	 * @return array			The fetched user from database.
+	 */
+	public function getUser(string $id): array;
 }
 
 ?>

@@ -49,6 +49,22 @@ class Register extends RegisterBase {
 		$lastId = parent::registerUser();
 		return $lastId;
 	}
+
+	/**
+	 * Get user.
+	 * 
+	 * Get the user from databse.
+	 * 
+	 * It uses the $id as parameter to fetch the user.
+	 * 
+	 * @param	int		$id		Id of a user from database.
+	 * @return	array			The fetched user from database.
+	 */
+	public function getUser($id): array {
+		$user = parent::getUser($id);
+		return $user;
+	}
+	
 }
 
 
