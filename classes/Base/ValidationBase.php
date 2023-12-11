@@ -77,7 +77,6 @@ class ValidationBase implements ValidationInterface {
 			$array_rules = null;
 
 			if (strpos($rule, "|")) {
-				echo "--" . $key . "contains | " . PHP_EOL;
 				$array_rules = explode("|", $rule);
 			} else {
 				$array_rules = explode(" ", $rule);
