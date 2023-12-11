@@ -12,7 +12,7 @@ namespace Classes\Interface;
  */
 Interface ValidationInterface {
 
-	public function splitValidationRules();
+	public function validationStart();
 	
 	public function validate();
 
