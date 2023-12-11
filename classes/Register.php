@@ -58,9 +58,9 @@ class Register extends RegisterBase {
 	 * It uses the $id as parameter to fetch the user.
 	 * 
 	 * @param	int		$id		Id of a user from database.
-	 * @return	array			The fetched user from database.
+	 * @return	mixed			The fetched user from database.
 	 */
-	public function getUser($id): array {
+	public function getUser($id): mixed {
 		$user = parent::getUser($id);
 		return $user;
 	}

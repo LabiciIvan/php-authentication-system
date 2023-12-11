@@ -73,7 +73,7 @@ class RegisterBase extends DB implements RegisterInterface {
 		return $user;
 	}
 
-	public function getUser(string $id): array {
+	public function getUser(string $id): mixed {
 
 		$stmt = $this->db->prepare("SELECT name from users WHERE id=:id");
 

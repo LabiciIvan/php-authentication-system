@@ -81,8 +81,22 @@ function registerRoute(array $register_data) {
 
 	// Validation logic finished and we can store the user in database.
 	$registerInstance = new Register($register_data);
-	$userID	= $registerInstance->registerUser();
-	$user	= $registerInstance->getUser($userID);
+
+	try {
+		$userID	= $registerInstance->registerUser();
+		$user	= $registerInstance->getUser($userID);
+
+	} catch (Exception $e) {
+		if (strpos($e->getMessage(), 'Duplicate')) {
+			$emailErrors = new TemporaryStorage(['email' => 'This email is already in use !'], 'register_errors');
+			$emailErrors->store();
+			header('location: register');
+			exit;
+		}
+		var_dump($e->getMessage());
+		exit;
+	}
+
 
 	// Remove session data related to errors and register data.
 	unset($_SESSION['register_errors']);
