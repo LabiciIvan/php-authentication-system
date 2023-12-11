@@ -48,9 +48,9 @@ Interface RegisterInterface {
 	 * want to fetch that user based on the last insert ID.
 	 * 
 	 * @param	int		$id		The user ID from database.
-	 * @return array			The fetched user from database.
+	 * @return mixed			The fetched user from database.
 	 */
-	public function getUser(string $id): array;
+	public function getUser(string $id): mixed;
 }
 
 ?>
