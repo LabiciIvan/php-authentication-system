@@ -27,7 +27,7 @@ Interface ValidationInterface {
 	 */
 	public static function checkExistance(array $data);
 
-	public function storeErrorOnValidation();
+	public function storeErrorOnValidation($key, $message);
 
 	public function getError();
 }

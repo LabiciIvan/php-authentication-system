@@ -24,7 +24,9 @@ class ValidationBase implements ValidationInterface {
 
 	protected ?array $errors = null;
 
-	protected array $expressions = [];
+	protected array $expressions = [
+		'required' => 'required',
+	];
 
 	public function __construct(array $fields, array $rules) {
 		$this->process($fields, $rules);
@@ -86,8 +88,21 @@ class ValidationBase implements ValidationInterface {
 		}
 	}
 
+	/**
+	 * Validate fields.
+	 * 
+	 * Validates each field present in rules.
+	 * 
+	 * It works by accessing the field from $this->fields array
+	 * specific to each field name present in $this->rules array.
+	 */
 	public function validate() {
-		//@TODO
+		foreach ($this->rules as $key => $rule) {
+			foreach ($rule as $r) {
+				$function = $this->expressions[$r];
+				$this->$function($key);
+			}
+		}
 	}
 
 	public static function checkExistance(array $data) {
@@ -104,11 +119,23 @@ class ValidationBase implements ValidationInterface {
 
 	}
 
-	public function storeErrorOnValidation() {
-		//@TODO
+	public function storeErrorOnValidation($key, $message) {
+		$this->errors[$key][] = $message;
 	}
 
 	public function getError() {
 		return (isset($this->errors) ? $this->errors : null);
+	}
+
+	private function required($key) {
+		$is_present = (isset($this->fields[$key]) ? true : false);
+
+		if ($is_present) {
+			$is_present = (strlen($this->fields[$key]) !== 0 ? true : false);
+		}
+		
+		if (!$is_present) {
+			$this->storeErrorOnValidation($key, "Field {$key} is required.");
+		}
 	}
 }
