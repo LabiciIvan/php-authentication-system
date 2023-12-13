@@ -25,7 +25,8 @@ class ValidationBase implements ValidationInterface {
 	protected ?array $errors = null;
 
 	protected array $expressions = [
-		'required' => 'required',
+		'required'	=> 'required',
+		'max'		=> 'max',
 	];
 
 	public function __construct(array $fields, array $rules) {
@@ -42,8 +43,8 @@ class ValidationBase implements ValidationInterface {
 	 * Rules is just an array composed out the Fields names as keys
 	 * and it's values which is a string separated by a "|" pipe.
 	 * 
-	 * @param	array	$fields		Fields to be validated.
-	 * @param	array	$rules		Rules for the fields to be validated.
+	 * @param	array	$fields				Fields to be validated.
+	 * @param	array	$rules				Rules for the fields to be validated.
 	 * 
 	 * @return	void
 	 */
@@ -99,8 +100,19 @@ class ValidationBase implements ValidationInterface {
 	public function validate() {
 		foreach ($this->rules as $key => $rule) {
 			foreach ($rule as $r) {
-				$function = $this->expressions[$r];
-				$this->$function($key);
+
+				// Check for functions with conditions.
+				if (strpos($r, ":")) {
+					list($rule_name, $rule_condition) = explode(":", $r);
+				}
+				
+				// Get the function from $this->expressions array.
+				$function = $this->expressions[(isset($rule_name) ? $rule_name : $r)];
+
+				// Each function must contain a second parameter called $rule_condition.
+				// E.g. function 'max:50' it has the condition 50.
+				// Functions which don't contain a $rule_condition just pass null e.g 'required'.
+				$this->$function($key, (isset($rule_condition) ? $rule_condition : null));
 			}
 		}
 	}
@@ -127,7 +139,13 @@ class ValidationBase implements ValidationInterface {
 		return (isset($this->errors) ? $this->errors : null);
 	}
 
-	private function required($key) {
+	/**
+	 * Check if the field is present.
+	 * 
+	 * @param	string	$key				The field name.
+	 * @param	string	$rule_condition		Condition to the rule.
+	 */
+	private function required($key, string $rule_condition = null) {
 		$is_present = (isset($this->fields[$key]) ? true : false);
 
 		if ($is_present) {
@@ -136,6 +154,24 @@ class ValidationBase implements ValidationInterface {
 		
 		if (!$is_present) {
 			$this->storeErrorOnValidation($key, "Field {$key} is required.");
+		}
+	}
+
+	/**
+	 * Check if the field is more then the specified length.
+	 * 
+	 * @param	string	$key				The field name.
+	 * @param	string	$rule_condition		Condition to the rule.
+	 */
+	private function max(string $key, string $rule_condition = null): void {
+		$max_error = null;
+
+		if (isset($this->fields[$key])) {
+			$max_error = ((strlen($this->fields[$key]) > (int)$rule_condition) ? "Field {$key} can be maximum {$rule_condition} chars !" : null);
+		}
+
+		if (isset($max_error)) {
+			$this->storeErrorOnValidation($key, $max_error);
 		}
 	}
 }
