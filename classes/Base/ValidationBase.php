@@ -27,6 +27,7 @@ class ValidationBase implements ValidationInterface {
 	protected array $expressions = [
 		'required'	=> 'required',
 		'max'		=> 'max',
+		'min'		=> 'min',
 	];
 
 	public function __construct(array $fields, array $rules) {
@@ -100,6 +101,9 @@ class ValidationBase implements ValidationInterface {
 	public function validate() {
 		foreach ($this->rules as $key => $rule) {
 			foreach ($rule as $r) {
+				// Set as null, so no previous value is remebered.
+				$rule_name		= null;
+				$rule_condition	= null;
 
 				// Check for functions with conditions.
 				if (strpos($r, ":")) {
@@ -110,7 +114,7 @@ class ValidationBase implements ValidationInterface {
 				$function = $this->expressions[(isset($rule_name) ? $rule_name : $r)];
 
 				// Each function must contain a second parameter called $rule_condition.
-				// E.g. function 'max:50' it has the condition 50.
+				// E.g. function 'max:50' it has the $rule_condition as 50.
 				// Functions which don't contain a $rule_condition just pass null e.g 'required'.
 				$this->$function($key, (isset($rule_condition) ? $rule_condition : null));
 			}
@@ -131,6 +135,14 @@ class ValidationBase implements ValidationInterface {
 
 	}
 
+	/**
+	 * Store errors.
+	 * 
+	 * Stores errors based on the provided key.
+	 * 
+	 * @param	string	$key				The field name.
+	 * @param	string	$message			The message error.
+	 */
 	public function storeErrorOnValidation($key, $message) {
 		$this->errors[$key][] = $message;
 	}
@@ -140,6 +152,8 @@ class ValidationBase implements ValidationInterface {
 	}
 
 	/**
+	 * Check presence.
+	 * 
 	 * Check if the field is present.
 	 * 
 	 * @param	string	$key				The field name.
@@ -158,7 +172,9 @@ class ValidationBase implements ValidationInterface {
 	}
 
 	/**
-	 * Check if the field is more then the specified length.
+	 * Check maximum length.
+	 * 
+	 * Check if the field length doesn't exceed the maximum length.
 	 * 
 	 * @param	string	$key				The field name.
 	 * @param	string	$rule_condition		Condition to the rule.
@@ -172,6 +188,26 @@ class ValidationBase implements ValidationInterface {
 
 		if (isset($max_error)) {
 			$this->storeErrorOnValidation($key, $max_error);
+		}
+	}
+
+	/**
+	 * Check minumum length.
+	 * 
+	 * Check if the field has the minimum length.
+	 * 
+	 * @param	string	$key					The field name.
+	 * @param	string	$rule_condition			Condition to the rule.
+	 */
+	private function min(string $key, string $rule_condition = null): void {
+		$min_error = null;
+
+		if (isset($this->fields[$key])) {
+			$min_error = ((strlen($this->fields[$key]) < (int)$rule_condition) ? "Field {$key} must be minimum {$rule_condition} chars !" : null);
+		}
+
+		if (isset($min_error)) {
+			$this->storeErrorOnValidation($key, $min_error);
 		}
 	}
 }
