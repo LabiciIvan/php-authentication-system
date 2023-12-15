@@ -28,6 +28,8 @@ class ValidationBase implements ValidationInterface {
 		'required'	=> 'required',
 		'max'		=> 'max',
 		'min'		=> 'min',
+		'isEmail'	=> 'isEmail',
+		'repeat'	=> 'repeat',
 	];
 
 	public function __construct(array $fields, array $rules) {
@@ -192,7 +194,7 @@ class ValidationBase implements ValidationInterface {
 	}
 
 	/**
-	 * Check minumum length.
+	 * Check minimum length.
 	 * 
 	 * Check if the field has the minimum length.
 	 * 
@@ -209,5 +211,32 @@ class ValidationBase implements ValidationInterface {
 		if (isset($min_error)) {
 			$this->storeErrorOnValidation($key, $min_error);
 		}
+	}
+
+	/**
+	 * Check if email.
+	 * 
+	 * Check if the filed is an email.
+	 * 
+	 * @param	string	$key					The field name.
+	 * @param	string	$rule_condition			Condition to the rule.
+	 */
+	private function isEmail(string $key, string $rule_condition): void {
+		// @TO DO
+	}
+
+	/**
+	 * Check if repeats.
+	 * 
+	 * Check if the field with this rule has a field with
+	 * the same name and is sufixed with _repeat word.
+	 * 
+	 * Also checks if both fields have the same matching value.
+	 * 
+	 * @param	string	$key					The field name.
+	 * @param	string	$rule_condition			Condition to the rule.
+	 */
+	private function repeat(string $key, string $rule_condition): void {
+		// @TO DO
 	}
 }
