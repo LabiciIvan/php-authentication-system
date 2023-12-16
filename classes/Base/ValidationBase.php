@@ -221,7 +221,7 @@ class ValidationBase implements ValidationInterface {
 	 * @param	string	$key					The field name.
 	 * @param	string	$rule_condition			Condition to the rule.
 	 */
-	private function isEmail(string $key, string $rule_condition): void {
+	private function isEmail(string $key, string $rule_condition = null): void {
 		// @TO DO
 	}
 
@@ -236,7 +236,31 @@ class ValidationBase implements ValidationInterface {
 	 * @param	string	$key					The field name.
 	 * @param	string	$rule_condition			Condition to the rule.
 	 */
-	private function repeat(string $key, string $rule_condition): void {
-		// @TO DO
+	private function repeat(string $key, string $rule_condition = null): void {
+		// E.g if $key === 'password' will look for another field
+		// named the same but prefixed with _password.
+		$look_for = $key . "_repeat";
+
+		// Assume it was not found, and only change to false when found.
+		$not_found = true;
+		$not_match = true;
+
+		if (isset($this->fields[$look_for])) {
+			$not_found = false;
+			
+			if ($this->fields[$look_for] === $this->fields[$key]) {
+				$not_found = false;
+				$not_match = false;
+			}
+		} else {
+			$not_match = false;
+		}
+
+		if ($not_found && !$not_match) {
+			$this->storeErrorOnValidation($key, "Field {$key} must have a field with _repeat sufix.");
+		} else if ($not_match) {
+			$this->storeErrorOnValidation($key, "Field {$key} don't match.");
+		}
+
 	}
 }
