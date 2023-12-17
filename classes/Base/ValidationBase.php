@@ -223,7 +223,19 @@ class ValidationBase implements ValidationInterface {
 	 * @param	string	$rule_condition			Condition to the rule.
 	 */
 	private function isEmail(string $key, string $rule_condition = null): void {
-		// @TO DO
+
+		// Regex to structure an email format.
+		$regex_email = '/^[^\s\d]\S*[^0-9]\S*\@[^@]*\.\w+\S*$/';
+
+		// If field is present we assign the variable if not we assign null.
+		$email = (isset($this->fields[$key]) ? $this->fields[$key] : null);
+
+		if (isset($email)) {
+			// Check if email matches the regex strcuture.
+			if (!preg_match($regex_email, $email)) {
+				$this->storeErrorOnValidation($key, "Field {$key} is not structured as an email.");
+			}
+		}
 	}
 
 	/**
