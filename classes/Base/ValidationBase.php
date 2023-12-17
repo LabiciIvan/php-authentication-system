@@ -30,6 +30,7 @@ class ValidationBase implements ValidationInterface {
 		'min'		=> 'min',
 		'isEmail'	=> 'isEmail',
 		'repeat'	=> 'repeat',
+		'exists'	=> 'exists',
 	];
 
 	public function __construct(array $fields, array $rules) {
@@ -261,6 +262,17 @@ class ValidationBase implements ValidationInterface {
 		} else if ($not_match) {
 			$this->storeErrorOnValidation($key, "Field {$key} don't match.");
 		}
+	}
 
+	/**
+	 * Check existance.
+	 * 
+	 * Check if the field exists in the database.
+	 * 
+	 * @param	string	$key					The field name.
+	 * @param	string	$rule_condition			Condition to the rule.
+	 */
+	private function exists(string $key, string $rule_condition = null) {
+		// @TO DO
 	}
 }
