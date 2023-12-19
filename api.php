@@ -1,11 +1,11 @@
 <?php
 require __DIR__ . "/classes/TemporaryStorage.php";
-require __DIR__ . "/classes/Base/ValidationBase.php";
+require __DIR__ . "/classes/Validation.php";
 require __DIR__ . "/classes/Register.php";
 
 use Classes\Register;
 use Classes\TemporaryStorage;
-use Classes\Base\ValidationBase;
+use Classes\Validation;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['route']) && ($_POST['route'] === 'login' || $_POST['route'] === 'register')) {
 
@@ -53,6 +53,15 @@ function loginRoute(array $login_data) {
  * a register process.
  */
 function registerRoute(array $register_data) {
+	
+	// Rules to register data.
+	$register_rules = [
+		'name'				=> 'required|min:4',
+		'gender'			=> 'required',
+		'email'				=> 'required|isEmail',
+		'password'			=> 'required|repeat|min:4',
+		'password_repeat'	=> 'required|min:4',
+	];
 
 	// Start the session to store for temporary use incoming register data.
 	TemporaryStorage::sessionStart();
@@ -68,12 +77,14 @@ function registerRoute(array $register_data) {
 	$tempRegisterData->store();
 	
 	// Validate if all the fields have at least a value.
-	$result = ValidationBase::checkExistance($register_data);
+	$validator = new Validation($register_data, $register_rules);
+	$validator->validate();
+	$validation_errors = $validator->getError();
 
-	// If is array then store in session the errors and redirect to register page.
-	if (is_array($result)) {
-		// Store the errors of fields which failed validation.
-		$tempErrors = new TemporaryStorage($result, 'register_errors');
+	// If any errors are found after validation redirect to register page.
+	if (isset($validation_errors)) {
+		// Store the errors in session.
+		$tempErrors = new TemporaryStorage($validation_errors, 'register_errors');
 		$tempErrors->store();
 		header("location: register");
 		exit;
@@ -96,7 +107,6 @@ function registerRoute(array $register_data) {
 		var_dump($e->getMessage());
 		exit;
 	}
-
 
 	// Remove session data related to errors and register data.
 	unset($_SESSION['register_errors']);
