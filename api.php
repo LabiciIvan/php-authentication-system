@@ -2,10 +2,12 @@
 require __DIR__ . "/classes/TemporaryStorage.php";
 require __DIR__ . "/classes/Validation.php";
 require __DIR__ . "/classes/Register.php";
+require __DIR__ . "/classes/Login.php";
 
 use Classes\Register;
 use Classes\TemporaryStorage;
 use Classes\Validation;
+use Classes\Login;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['route']) && ($_POST['route'] === 'login' || $_POST['route'] === 'register')) {
 
@@ -44,6 +46,12 @@ function loginRoute(array $login_data) {
 	TemporaryStorage::sessionStart();
 	$tempStorage = new TemporaryStorage($login_data, 'login');
 	$tempStorage->store();
+
+	$login = new Login($login_data);
+
+	$usr = $login->getUser();
+
+	var_dump($usr);
 }
 
 /**
