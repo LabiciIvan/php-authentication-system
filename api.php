@@ -50,8 +50,6 @@ function loginRoute(array $login_data) {
 	$login = new Login($login_data);
 
 	$usr = $login->getUser();
-
-	var_dump($usr);
 }
 
 /**
