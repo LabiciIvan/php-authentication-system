@@ -23,6 +23,16 @@ class LoginBase extends DB implements LoginInterface {
 		// @TO DO
 	}
 
+	/**
+	 * Get the user.
+	 * 
+	 * Get the user by the email.
+	 * 
+	 * The data is provided when new instance of the class
+	 * is created.
+	 * 
+	 * @return	mixed
+	 */
 	public function getUser(): mixed {
 
 		$stmt = $this->db->prepare('SELECT email, password FROM users WHERE email=:email');
