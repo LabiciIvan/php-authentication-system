@@ -11,7 +11,7 @@ namespace Classes\Interface;
  * This Interface can be used as a single class which will be
  * used for both purpouses : registration and log-in.
  */
-Interface Authentication {
+Interface AuthenticationInterface {
 
 	/**
 	 * Check user exists.
