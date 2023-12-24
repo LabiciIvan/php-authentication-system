@@ -36,7 +36,7 @@ Interface AuthenticationInterface {
 	 * 
 	 * @return int
 	 */
-	public function registerUser(): int;
+	public function registerUser(): bool;
 
 	/**
 	 * Get user.

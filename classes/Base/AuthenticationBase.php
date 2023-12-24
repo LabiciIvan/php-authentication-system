@@ -7,7 +7,18 @@ require __DIR__ . "/../DB.php";
 
 use Classes\Interface\AuthenticationInterface;
 use Classes\DB;
+use PDOException;
 
+/**
+ * AuthenticationBase class.
+ * 
+ * This class resolves all processes related to authentication
+ * of users in the application.
+ * 
+ * Most of the logic is written inside this class.
+ * 
+ * Provides usefull methods from registering users up to log in.
+ */
 class AuthenticationBase extends DB implements AuthenticationInterface {
 
 	private	array		$data;
@@ -19,6 +30,13 @@ class AuthenticationBase extends DB implements AuthenticationInterface {
 		$this->data = $data;
 	}
 
+	/**
+	 * Check if user exists.
+	 * 
+	 * Checks if the user exist using the email.
+	 * 
+	 * @return	bool	True if user exists and false otherwise.
+	 */
 	public function checkUserExists(): bool {
 		// Prepare statement for email value.
 		$stmt = $this->db->prepare("SELECT email FROM users WHERE email=:email");
@@ -33,8 +51,32 @@ class AuthenticationBase extends DB implements AuthenticationInterface {
 		return ($result ? true : false);
 	}
 
-	public function registerUser(): int {
-		// @TO DO
+	/**
+	 * Register user in to application.
+	 * 
+	 */
+	public function registerUser(): bool {
+
+		// Prepare statements using placeholders.
+		$stmt = $this->db->prepare("INSERT INTO users (name, email, gender, password, password_repeat) VALUES (:name, :email, :gender, :password, :password_repeat)");
+
+		// Wrapp in try-catch block in case of a duplicate entry for email.
+		try {
+			$stmt->execute(
+				array(
+					":name"				=> $this->data['name'],
+					":email"			=> $this->data['email'],
+					":gender"			=> $this->data['gender'],
+					":password"			=> $this->data['password'],
+					":password_repeat"	=> $this->data['password_repeat'],
+				)
+			);
+		} catch (PDOException $e) {
+			var_dump($e->getMessage());
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
