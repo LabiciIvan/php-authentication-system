@@ -1,13 +1,12 @@
 <?php
-require __DIR__ . "/classes/TemporaryStorage.php";
-require __DIR__ . "/classes/Validation.php";
-require __DIR__ . "/classes/Register.php";
-require __DIR__ . "/classes/Login.php";
 
-use Classes\Register;
-use Classes\TemporaryStorage;
+require __DIR__ . "/classes/Validation.php";
+require __DIR__ . "/classes/TemporaryStorage.php";
+require __DIR__ . "/classes/Base/AuthenticationBase.php";
+
 use Classes\Validation;
-use Classes\Login;
+use Classes\TemporaryStorage;
+use Classes\Base\AuthenticationBase;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['route']) && ($_POST['route'] === 'login' || $_POST['route'] === 'register')) {
 
@@ -46,10 +45,6 @@ function loginRoute(array $login_data) {
 	TemporaryStorage::sessionStart();
 	$tempStorage = new TemporaryStorage($login_data, 'login');
 	$tempStorage->store();
-
-	$login = new Login($login_data);
-
-	$usr = $login->getUser();
 }
 
 /**
@@ -97,31 +92,27 @@ function registerRoute(array $register_data) {
 	}
 
 	// Validation logic finished and we can store the user in database.
-	$registerInstance = new Register($register_data);
+	$auth = new AuthenticationBase($register_data);
 
-	try {
-		$userID	= $registerInstance->registerUser();
-		$user	= $registerInstance->getUser($userID);
-
-	} catch (Exception $e) {
-		if (strpos($e->getMessage(), 'Duplicate')) {
-			$emailErrors = new TemporaryStorage(['email' => 'This email is already in use !'], 'register_errors');
-			$emailErrors->store();
-			header('location: register');
-			exit;
-		}
-		var_dump($e->getMessage());
-		exit;
+	// Check if user is already registered in the database.
+	if ($auth->checkUserExists()) {
+		$user_exists_error = new TemporaryStorage(['email' => ['Email is already in use.']], 'register_errors');
+		$user_exists_error->store();
+		header("location: register");
 	}
 
-	// Remove session data related to errors and register data.
-	unset($_SESSION['register_errors']);
-	unset($_SESSION['register']);
+	// If registration is successful, then remove all errors and redirect
+	// with a success message.
+	if ($auth->registerUser()) {
+		// Remove session data related to errors and register data.
+		unset($_SESSION['register_errors']);
+		unset($_SESSION['register']);
 
-	// Store a new session with a message to user and return to register page.
-	$register_success = new TemporaryStorage(['success' => $user['name'] . ' you are registered now.'], 'register_success');
-	$register_success->store();
-
-	header("location: register");
+		// Store a new session with a message to user and return to register page.
+		$register_success = new TemporaryStorage(['success' => 'Registered with success.'], 'register_success');
+		$register_success->store();
+	
+		header("location: register");
+	}
 }
 ?>
