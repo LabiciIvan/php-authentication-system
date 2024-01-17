@@ -100,8 +100,39 @@ class AuthenticationBase extends DB implements AuthenticationInterface {
 		return ($result ? $result : false);
 	}
 
+
+	/**
+	 * Check if logged.
+	 * 
+	 * Checks if the user is logged and return true or
+	 * false otherwise.
+	 * 
+	 * @return	bool
+	 */
+	public function checkIfLogged(): bool {
+		$user_found = false;
+
+		if (isset($_SESSION['auth']['logged']['user'])) {
+			foreach ($_SESSION['auth']['logged']['user'] as $user) {
+				if ($user === $this->data['email']) {
+					$user_found = true;
+				}
+			}
+		}
+
+		return $user_found;
+	}
+
+	/**
+	 * Log in.
+	 * 
+	 * Logs the user in to the application.
+	 * 
+	 * The login is held inside a $_SESSION[auth][logged][user] array.
+	 */
 	public function login(): mixed {
-		// @TO DO
+		$_SESSION['auth']['logged']['user'][] = $this->data['email'];
+		return true;
 	}
 
 	public function logOut(): mixed {

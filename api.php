@@ -42,9 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['route']) && ($_POST['
  */
 function loginRoute(array $login_data) {
 
-	TemporaryStorage::sessionStart();
-	$tempStorage = new TemporaryStorage($login_data, 'login');
-	$tempStorage->store();
+	// Helps with all authentication processes.
+	$auth = new AuthenticationBase($login_data);
+
+	// If user not logged then will log the user in.
+	if(!$auth->checkIfLogged()) {
+		// Perform the user log-in.
+		$auth->login();
+	}
 }
 
 /**
